@@ -1,15 +1,16 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-// import './index.css';
-// import App from './App';
+import './index.css';
+import App from './App';
 import StarComponent from './StarComponent';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    {/* <App /> */}
-    <StarComponent maxRating={5}/>
+    <App />
+    {/* <StarComponent maxRating={5}/>
+    <StarComponent maxRating={5} size={111} color='violet'/> */}
   </React.StrictMode>
 );
 
