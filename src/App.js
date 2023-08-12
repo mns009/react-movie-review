@@ -54,18 +54,26 @@ const KEY = "f84fc31d";
 export default function App() {
   const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState([]);
-  const[isLoading,setIsLoading]=useState(false)
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
   useEffect(function () {
     async function fetchMovies() {
-      setIsLoading(true)
-      console.log("fff")
-      const res = await fetch(
-        `http://www.omdbapi.com/?apikey=${KEY}&s=interstellar`
-      );
-      const data = await res.json();
-      setMovies(data.Search);
-      console.log("hello")
-     setIsLoading(false)
+      try {
+        setIsLoading(true);
+        const res = await fetch(
+          `http://www.omdbapi.com/?apikey=${KEY}&s=saaasass`
+        );
+        if (!res.ok) throw new Error("Something went wrong");
+        const data = await res.json();
+        console.log(data)
+        if (data.Response === "False") throw new Error("movie not found");
+        setMovies(data.Search);
+      } catch (err) {
+        console.error(err.message);
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
     }
     fetchMovies();
   }, []);
@@ -79,8 +87,11 @@ export default function App() {
       </NavBar>
 
       <Main>
+        {/* <Box>{isLoading ? <Loader /> : <MovieList movies={movies} />}</Box> */}
         <Box>
-          {isLoading ? <Loader/> :<MovieList movies={movies} />}
+          {isLoading && <Loader />}
+          {!isLoading && !error && <MovieList movies={movies} />}
+          {error && <ErrorMessage message={error} />}
         </Box>
 
         <Box>
@@ -91,8 +102,16 @@ export default function App() {
     </>
   );
 }
-function Loader(){
-  return <p className="loader">Loading...</p>
+function ErrorMessage({ message }) {
+  return (
+    <p className="error">
+      <span>🛑</span>
+      {message}
+    </p>
+  );
+}
+function Loader() {
+  return <p className="loader">Loading...</p>;
 }
 function NavBar({ children }) {
   return <nav className="nav-bar">{children}</nav>;
