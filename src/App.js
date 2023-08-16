@@ -67,6 +67,10 @@ export default function App() {
   function handleCloseMovie() {
     setSelectedId(null);
   }
+
+  function handleAddWatched(movie){
+    setWatched(watched=>[...watched ,movies])
+  }
   useEffect(
     function () {
       async function fetchMovies() {
@@ -122,6 +126,7 @@ export default function App() {
             <MovieDetails
               selectedId={selectedId}
               onCloseMovie={handleCloseMovie}
+              onAddwatched={handleAddWatched}
             />
           ) : (
             <>
@@ -233,7 +238,7 @@ function Movie({ movie, onSelectMovie }) {
     </li>
   );
 }
-function MovieDetails({ selectedId, onCloseMovie }) {
+function MovieDetails({ selectedId, onCloseMovie,onAddwatched }) {
   const [movie, setMovie] = useState({});
 
   const {
@@ -248,6 +253,19 @@ function MovieDetails({ selectedId, onCloseMovie }) {
     Director: director,
     Genre: genre,
   } = movie;
+
+  function handleAdd(){
+    const newWatchedMovie = {
+      imdbID: selectedId,
+      title,
+      year,
+      poster,
+      imdbRating: Number(imdbRating),
+      runtime: Number(runtime.split(" ").at(0)),
+      
+    };
+    onAddwatched();
+  }
   useEffect(function () {
     async function getMovieDetails() {
       const res = await fetch(
@@ -282,6 +300,7 @@ function MovieDetails({ selectedId, onCloseMovie }) {
       </header>
       <section>
        <div className="rating"> <StarComponent maxRating={10} size={24} /></div>
+       <button className="btn-add" onClick={handleAdd}>+ Add to List</button>
         <p>
           <em>{plot}</em>
         </p>
@@ -332,8 +351,8 @@ function WatchedMovieList({ watched }) {
 function WatchedMovie({ movie }) {
   return (
     <li>
-      <img src={movie.Poster} alt={`${movie.Title} poster`} />
-      <h3>{movie.Title}</h3>
+      <img src={movie.poster} alt={`${movie.title} poster`} />
+      <h3>{movie.title}</h3>
       <div>
         <p>
           <span>⭐️</span>
